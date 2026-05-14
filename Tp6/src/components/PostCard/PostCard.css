@@ -1,0 +1,121 @@
+.post-card {
+  background: #111320;
+  border-radius: 12px;
+  overflow: hidden;
+  break-inside: avoid;
+  margin-bottom: 16px;
+  transition: transform 0.2s;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+.post-card__image-wrapper {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.post-card__image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  /* Rotate 3 degrees to the left as required */
+  transform: rotate(-3deg) scale(1.08);
+  transition: transform 0.3s ease;
+}
+
+.post-card__image-wrapper:hover .post-card__image {
+  transform: rotate(-3deg) scale(1.12);
+}
+
+.post-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-card__image-wrapper:hover .post-card__overlay {
+  opacity: 1;
+}
+
+.post-card__overlay-actions {
+  display: flex;
+  gap: 24px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.post-card__overlay-actions span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.post-card__overlay-actions svg {
+  width: 22px;
+  height: 22px;
+}
+
+.post-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.post-card__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-card__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2a2d3e;
+}
+
+.post-card__username {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.post-card__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.post-card__action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+
+.post-card__action-btn:hover {
+  transform: scale(1.2);
+}
+
+.post-card__action-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+}
+
+.post-card__action-btn--liked svg {
+  color: #e91e8c;
+}

@@ -1,73 +1,164 @@
-# React + TypeScript + Vite
+# TP6 — Clon de Instagram con React 🐱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web inspirada en Instagram que muestra imágenes de gatos obtenidas desde una API externa.
 
-Currently, two official plugins are available:
+## 🔗 Diseño de Figma utilizado como referencia
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**[Instagram Web UI Recreated](https://www.figma.com/es-es/comunidad/file/1235135369163092252/instagram-web-ui-recreated)**
 
-## React Compiler
+El diseño implementado sigue fielmente la estética oscura del Figma: sidebar izquierdo con perfil y navegación, barra superior con búsqueda, sección de Stories, feed en grilla de 3 columnas (Trending), y modal de publicación individual.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Cómo ejecutar el proyecto
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd Tp6
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Luego abrir [http://localhost:5173](http://localhost:5173) en el navegador.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Organización del proyecto
+
 ```
+src/
+├── components/
+│   ├── Header/          # Barra superior
+│   ├── Sidebar/         # Panel lateral con perfil y navegación
+│   ├── Stories/         # Sección de historias
+│   ├── Feed/            # Grilla de publicaciones (Trending)
+│   ├── PostCard/        # Tarjeta individual de publicación
+│   ├── PostModal/       # Modal de visualización detallada
+│   └── ProfileView/     # Vista de perfil de usuario
+├── data/
+│   └── userData.ts      # Datos fijos del usuario y datos mock
+├── types/
+│   └── index.ts         # Interfaces TypeScript (Post, Story, Comment)
+├── App.tsx              # Componente raíz, manejo de estado global
+├── App.css              # Layout principal
+└── index.css            # Reset y estilos base
+```
+
+---
+
+## 🧩 Componentes creados y su responsabilidad
+
+| Componente | Responsabilidad |
+|---|---|
+| **Header** | Barra superior fija con logo, buscador y acciones. Recibe `onNavigate` para cambiar de vista. |
+| **Sidebar** | Panel lateral fijo con avatar del usuario, estadísticas y menú de navegación. Recibe `currentView` y `onNavigate`. |
+| **Stories** | Muestra la fila de historias con avatares circulares. Recibe el array `stories` por props. |
+| **Feed** | Renderiza la grilla de publicaciones en 3 columnas. Recibe `posts`, `loading`, `onSelectPost` y `onLike`. |
+| **PostCard** | Tarjeta individual de publicación con imagen, usuario y botones de acción. Recibe `post`, `onSelect` y `onLike`. |
+| **PostModal** | Modal que se abre al hacer clic en una publicación. Muestra imagen ampliada, caption, comentarios y permite agregar comentarios. Recibe `post`, `onClose` y `onLike`. |
+| **ProfileView** | Vista completa del perfil del usuario con header de perfil, estadísticas y grilla de publicaciones al estilo Instagram. Recibe `posts` y `onSelectPost`. |
+
+### ¿Por qué esta componentización?
+
+Cada componente tiene una única responsabilidad (principio SRP). Esto permite:
+- Reutilizar `PostCard` tanto en el feed como en el perfil.
+- Mantener el modal (`PostModal`) completamente desacoplado del feed.
+- Cambiar la vista entre Home y Profile sin recargar datos.
+
+---
+
+## 🔗 Comunicación mediante props
+
+- `App.tsx` es el componente raíz que posee todo el estado global y lo distribuye hacia abajo.
+- `posts` y `stories` se pasan como props a `Feed`, `Stories` y `ProfileView`.
+- Las funciones `onLike`, `onSelectPost`, `onNavigate` se pasan como callbacks para que los hijos puedan modificar el estado del padre (lifting state up).
+- `selectedPost` se pasa a `PostModal` para saber qué publicación mostrar.
+
+---
+
+## 🪝 Hooks utilizados
+
+| Hook | Dónde | Para qué |
+|---|---|---|
+| `useState` | `App.tsx` | Guardar `posts`, `stories`, `loading`, `selectedPost`, `currentView` |
+| `useState` | `PostModal.tsx` | Guardar `newComment` y `localComments` |
+| `useEffect` | `App.tsx` | Realizar la petición a la API al montar el componente |
+| `useEffect` | `PostModal.tsx` | Bloquear el scroll del body cuando el modal está abierto |
+
+---
+
+## 🌐 Consumo de API
+
+Se utiliza **Axios** para consumir **The Cat API** (`https://api.thecatapi.com/v1/images/search`).
+
+- Se solicitan 12 imágenes al cargar la página.
+- Si la API falla, se usa **Cataas** (`https://cataas.com/cat`) como fallback.
+- Las Stories también usan imágenes de Cataas.
+- Todas las imágenes se rotan **-3 grados** (hacia la izquierda) mediante CSS `transform: rotate(-3deg)`.
+
+---
+
+## 🖼️ Visualización individual de publicaciones
+
+Se resolvió mediante un **modal** (`PostModal`).
+
+- Al hacer clic en cualquier imagen del feed o del perfil, se llama a `onSelectPost(post)`.
+- `App.tsx` guarda el post en `selectedPost` (useState).
+- `PostModal` recibe ese post y lo muestra con imagen ampliada, nombre de usuario, caption, likes, comentarios simulados y botones de interacción.
+- El usuario puede agregar comentarios en tiempo real (useState local en el modal).
+- Se cierra haciendo clic fuera del modal o en el botón X.
+
+---
+
+## 👤 Perfil de usuario emulado
+
+El perfil está definido en `src/data/userData.ts` con datos fijos:
+
+```ts
+export const currentUser = {
+  name: "Gato Lover",
+  username: "@gato_lover0",
+  verified: true,
+  bio: "🐱 Cat enthusiast | Photographer | Sharing the best cat moments",
+  followers: "121K",
+  likes: "900K",
+  ...
+};
+```
+
+**Datos mostrados en el perfil:**
+- Foto de perfil (imagen de gato de Cataas)
+- Nombre de usuario con badge de verificado
+- Cantidad de posts, seguidores y seguidos
+- Biografía breve
+- Botón "Edit Profile" y botón de configuración
+- Grilla de todas las publicaciones cargadas desde la API
+
+No se implementó login ni registro. El usuario ya está "logueado" al iniciar la app.
+
+---
+
+## 🎨 Estados para selección de publicaciones
+
+```ts
+const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+const [currentView, setCurrentView] = useState<"home" | "profile">("home");
+```
+
+- `selectedPost`: guarda la publicación seleccionada. Si es `null`, el modal no se muestra.
+- `currentView`: controla si se muestra el feed (Home) o la vista de perfil.
+
+---
+
+## 📦 Dependencias principales
+
+- **React 19** + **TypeScript**
+- **Axios** — consumo de API
+- **Vite** — bundler y dev server
+
+---
+
+## 📝 Instrucciones de entrega
+
+- Repositorio: GitHub (subir carpeta `Tp6`)
+- Figma: https://www.figma.com/es-es/comunidad/file/1235135369163092252/instagram-web-ui-recreated
+- Para ejecutar: `npm install && npm run dev`
