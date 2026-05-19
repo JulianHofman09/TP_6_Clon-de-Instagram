@@ -21,14 +21,8 @@
   width: 100%;
   display: block;
   object-fit: cover;
-  /* Rotate 3 degrees to the left as required */
-  transform: rotate(-3deg) scale(1.08);
-  transition: transform 0.3s ease;
 }
 
-.post-card__image-wrapper:hover .post-card__image {
-  transform: rotate(-3deg) scale(1.12);
-}
 
 .post-card__overlay {
   position: absolute;
