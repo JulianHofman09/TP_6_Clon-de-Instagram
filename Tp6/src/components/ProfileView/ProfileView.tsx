@@ -1,6 +1,6 @@
 import React from "react";
 import type { Post } from "../../types";
-import { currentUser } from "../../data/userData";
+import { useUser } from "../../context/UserContext";
 import "./ProfileView.css";
 
 interface ProfileViewProps {
@@ -9,6 +9,8 @@ interface ProfileViewProps {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ posts, onSelectPost }) => {
+  // Obtiene el usuario actual desde el Context global
+  const { user } = useUser();
   return (
     <div className="profile">
       {/* Profile header */}
@@ -27,8 +29,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ posts, onSelectPost }) => {
 
         <div className="profile__info">
           <div className="profile__name-row">
-            <h1 className="profile__name">{currentUser.name}</h1>
-            {currentUser.verified && (
+            <h1 className="profile__name">{user.name}</h1>
+            {user.verified && (
               <span className="profile__verified">✓</span>
             )}
             <button className="profile__edit-btn">Edit Profile</button>
@@ -46,7 +48,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ posts, onSelectPost }) => {
               <span className="profile__stat-label">posts</span>
             </div>
             <div className="profile__stat">
-              <span className="profile__stat-value">{currentUser.followers}</span>
+              <span className="profile__stat-value">{user.followers}</span>
               <span className="profile__stat-label">followers</span>
             </div>
             <div className="profile__stat">
@@ -55,8 +57,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ posts, onSelectPost }) => {
             </div>
           </div>
 
-          <div className="profile__username">{currentUser.username}</div>
-          <div className="profile__bio">{currentUser.bio}</div>
+          <div className="profile__username">{user.username}</div>
+          <div className="profile__bio">{user.bio}</div>
         </div>
       </div>
 

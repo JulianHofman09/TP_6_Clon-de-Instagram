@@ -1,5 +1,5 @@
 import React from "react";
-import { currentUser } from "../../data/userData";
+import { useUser } from "../../context/UserContext";
 import "./Sidebar.css";
 
 interface SidebarProps {
@@ -8,6 +8,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
+  // Obtiene el usuario actual desde el Context global
+  const { user } = useUser();
   const navItems = [
     {
       id: "home",
@@ -85,12 +87,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
         </div>
         <div className="sidebar__user-info">
           <div className="sidebar__name">
-            {currentUser.name}
-            {currentUser.verified && (
+            {user.name}
+            {user.verified && (
               <span className="sidebar__verified">✓</span>
             )}
           </div>
-          <div className="sidebar__username">{currentUser.username}</div>
+          <div className="sidebar__username">{user.username}</div>
         </div>
       </div>
 
@@ -103,13 +105,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <span>{currentUser.followers}</span>
+          <span>{user.followers}</span>
         </div>
         <div className="sidebar__stat">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
-          <span>{currentUser.likes}</span>
+          <span>{user.likes}</span>
         </div>
       </div>
 

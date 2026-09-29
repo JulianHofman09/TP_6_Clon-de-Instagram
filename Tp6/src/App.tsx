@@ -6,6 +6,7 @@ import Stories from "./components/Stories/Stories";
 import Feed from "./components/Feed/Feed";
 import PostModal from "./components/PostModal/PostModal";
 import ProfileView from "./components/ProfileView/ProfileView";
+import { UserProvider } from "./context/UserContext";
 import type { Post, Story } from "./types";
 import { mockComments, captions, storyUsers } from "./data/userData";
 import "./App.css";
@@ -125,6 +126,7 @@ function App() {
   };
 
   return (
+    <UserProvider>
     <div className="app">
       <Header onNavigate={handleNavigate} />
       <Sidebar currentView={currentView} onNavigate={handleNavigate} />
@@ -151,6 +153,7 @@ function App() {
         onLike={handleLike}
       />
     </div>
+    </UserProvider>
   );
 }
 

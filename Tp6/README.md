@@ -162,3 +162,72 @@ const [currentView, setCurrentView] = useState<"home" | "profile">("home");
 - Repositorio: GitHub (subir carpeta `Tp6`)
 - Figma: https://www.figma.com/es-es/comunidad/file/1235135369163092252/instagram-web-ui-recreated
 - Para ejecutar: `npm install && npm run dev`
+
+---
+
+## 🔄 React Context
+
+### 1. Información compartida
+
+Se comparte la información del usuario actualmente logueado entre todos los componentes de la aplicación. El Context expone el objeto `user` con los siguientes datos:
+
+- `name` — nombre completo del usuario
+- `username` — nombre de usuario (ej: `@gato_lover0`)
+- `verified` — si tiene el badge de verificado
+- `bio` — biografía del perfil
+- `followers` — cantidad de seguidores
+- `likes` — cantidad de likes totales
+- `avatar` — URL del avatar
+- `postsCount` — cantidad de publicaciones
+
+También expone `setUser`, la función para actualizar el usuario desde cualquier componente.
+
+### 2. Archivo donde se creó el Context
+
+```
+src/context/UserContext.tsx
+```
+
+Este archivo contiene:
+- La creación del Context con `createContext`
+- El `UserProvider` que envuelve la aplicación y mantiene el estado
+- El hook `useUser` que permite consumir el Context de forma simple
+
+### 3. Componente contenedor del Provider
+
+El Provider se ubica en `App.tsx`, envolviendo toda la aplicación:
+
+```tsx
+<UserProvider>
+  <div className="app">
+    ...
+  </div>
+</UserProvider>
+```
+
+Esto garantiza que todos los componentes dentro del árbol puedan acceder al usuario.
+
+### 4. Componentes que utilizan `useContext`
+
+Ambos consumen el Context a través del hook `useUser()`:
+
+| Componente | Información que obtiene |
+|---|---|
+| **`Sidebar`** | `user.name`, `user.verified`, `user.username`, `user.followers`, `user.likes` — para mostrar el perfil en el panel lateral |
+| **`ProfileView`** | `user.name`, `user.verified`, `user.username`, `user.bio`, `user.followers` — para mostrar el encabezado completo del perfil |
+
+Ejemplo de uso en `Sidebar.tsx`:
+
+```tsx
+const { user } = useUser();
+// luego en el JSX:
+<div>{user.name}</div>
+```
+
+### 5. Justificación técnica
+
+Antes de implementar Context, `Sidebar` y `ProfileView` importaban los datos del usuario directamente desde el archivo `userData.ts`. Eso funcionaba, pero tenía un problema: si el usuario cambiaba (por ejemplo, al editar su perfil), los componentes no se actualizaban porque los datos no eran estado de React.
+
+Con Context, el usuario vive dentro de un `useState` en el `UserProvider`. Cualquier componente que llame a `useUser()` recibe siempre los datos actualizados, sin necesidad de pasar esa información manualmente de componente en componente mediante props.
+
+Esto es especialmente útil porque `Sidebar` y `ProfileView` están separados en la jerarquía de componentes — ambos son hijos directos de `App`, y sin Context habría sido necesario pasar el mismo dato por props en paralelo a los dos. Con Context, ambos lo leen directamente del mismo lugar.
